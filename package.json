@@ -5,5 +5,11 @@
   "main": "index.js",
   "repository": "git@github.com:lelle/second-device-experiment.git",
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "start": "http-server -o public"
+  },
+  "dependencies": {
+    "http-server": "^0.10.0"
+  }
 }

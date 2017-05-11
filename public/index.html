@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Ludo test</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    html, body {
+      height: 100%;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: black;
+      min-height: 100%;
+    }
+
+    #mount-here {
+      z-index: 0;
+    }
+
+  </style>
+</head>
+<body>
+  <div id="mount-here"></div>
+
+  <script src="./lib/ludo_sync.js"></script>
+  <script>
+    window.player = ludo(document.querySelector('#mount-here'), {
+        id: 'KMTE40000312'
+    }, {
+        autoplay: true
+    });
+  </script>
+
+</body>
+</html>
