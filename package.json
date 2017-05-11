@@ -1,0 +1,9 @@
+{
+  "name": "second-device-experiment",
+  "version": "0.0.1",
+  "description": "Distribuert medieinnhold på second device",
+  "main": "index.js",
+  "repository": "git@github.com:lelle/second-device-experiment.git",
+  "author": "",
+  "license": "MIT"
+}
