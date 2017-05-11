@@ -22,15 +22,31 @@
   </style>
 </head>
 <body>
-  <div id="mount-here"></div>
+  <div style="width: 40%; display: inline-block">
+    <div id="mount-here"></div>
+  </div>
+  <div style="width: 40%; display: inline-block">
+    <div id="mount-there"></div>
+  </div>
 
+  <script src="https://webtiming.github.io/timingsrc/lib/timingsrc-v2.js"></script>
+  <script src="https://www.mcorp.no/lib/mcorp-2.0.js"></script>
+  <script src="https://mcorp.no/lib/mediasync.js"></script>
   <script src="./lib/ludo_sync.js"></script>
   <script>
-    window.player = ludo(document.querySelector('#mount-here'), {
-        id: 'KMTE40000312'
-    }, {
-        autoplay: true
+
+    var timingObject = new TIMINGSRC.TimingObject();
+
+    window.player1 = ludo(document.querySelector('#mount-here'), 'KMTE40000312', {
+        autoplay: true,
+        timingObject: timingObject
     });
+
+    window.player2 = ludo(document.querySelector('#mount-there'), 'KMTE40000312', {
+        autoplay: true,
+        timingObject: timingObject
+    });
+
   </script>
 
 </body>
