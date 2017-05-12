@@ -102,7 +102,6 @@
     };
 
 
-
     var app = MCorp.app("172720078118002530", {anon:true});
     app.to = new TIMINGSRC.TimingObject();
     app.sync = {};
@@ -138,7 +137,9 @@
     };
 
     app.subseq.on("change", function(e) {
-      document.querySelector("#subtitle").innerHTML = e.data;
+      var data = e.data.replace(/<(?:.|)*?>/gm, '');
+      window.player.emit('set-subtitles', data.split("\n"));
+
       if (app.read_subs) {
         var txt = e.data.replace(/<(?:.|\n)*?>/gm, ' ');
         responsiveVoice.speak(txt);
@@ -190,8 +191,9 @@
           type: "audio"
         },
         tegnspraak: {
-          url: "",
-          type: "video"
+          url: "https://mcorp.no/nrk/resources/Valkyrien_tegnspraak.mp4",
+          type: "video",
+          skew: 3
         }
         /*
         fullaudio: {
@@ -212,7 +214,6 @@
 
         if (content[key].type === "subtitle") {
           load_subs(app.subseq, content[key].url)
-          console.log("Subs loaded");
           continue;
         }
 
@@ -220,6 +221,7 @@
         a.src = content[key].url;
         a.setAttribute("id", key);
         a.volume = content[key].enabled ? 1 : 0;
+        a.style.display = "none";
         var options = {};
         if (content[key].skew) {
           options.skew = content[key].skew;
@@ -229,7 +231,8 @@
           app.sync[key].pause(true);
         }
 
-        document.querySelector("body").append(a);
+        target = document.querySelector("#" + key + "_container") || document.querySelector("body");
+        target.append(a);
       }
 
       var toggle = function(key, enable) {
@@ -239,12 +242,13 @@
       };
 
       document.querySelector("#tekst_on").onclick = function(e) {
-        var key = "tekst";
-        if (e.srcElement.checked) {
-          document.querySelector(".subtitles").style.display = "block";
-        } else {
-          document.querySelector(".subtitles").style.display = "none";
-        }
+        window.player.set("subtitles", e.srcElement.checked);
+      }
+
+     document.querySelector("#tegnspraak_on").onclick = function(e) {
+        var key = "tegnspraak";
+        toggle(key, e.srcElement.checked);
+        document.querySelector("#" + key).style.display = e.srcElement.checked ? "block" : "none";
       }
 
       document.querySelector("#lydtekst_on").onclick = function(e) {
@@ -261,20 +265,22 @@
         document.querySelector("audio#dialog").volume = app.read_subs ? 0.2 : 1;
       }
 
-      console.log("Registering");
       document.querySelector("#lesbarhet").onchange = function(e) {
         var level = e.srcElement.value;
-        console.log("lesbarhet", level);
         var opacity = 0.3;
-        var size = "1.4em";
+        var size = "1em";
         if (level == 1) {
           opacity = 1.0
         } else if (level == 2) {
           opacity = 1.0;
-          size = "1.8em";
+          size = "1.4em";
         }
-        document.querySelector("#subtitle").style.background = "rgba(0,0,0," + opacity +")";
-        document.querySelector("#subtitle").style.fontSize = size;
+
+        var lines = document.querySelectorAll(".ludo-captions__line-inner");
+        for (var i=0; i<lines.length; i++) {
+          lines[i].style.background = "rgba(0,0,0," + opacity +")";
+          lines[i].style.fontSize = size;
+        }
       }
 
       document.querySelector("#synstolk_on").onclick = function(e) {
@@ -371,7 +377,12 @@
     color: white;
     font-size: 1.5em;
   }
-
+  #tegnspraak_container {
+    width: 100%;
+  }
+  #tegnspraak_container video {
+    width: 100%;
+  }
   </style>
 
 
@@ -385,9 +396,8 @@
     <span class="subtitle" id="subtitle""></span>
   </div>
 </div>
-
-  <div class="controls">
-
+<div id="tegnspraak_container"></div>
+  
   <div class="subcontainer centerx">
 
     <h3 id="kicker">Undertekster</h3>
