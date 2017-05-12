@@ -29,6 +29,13 @@
     <div id="mount-there"></div>
   </div>
 
+  <div>
+    <div><input id="sub_line1" type="text" value=""></div>
+    <div><input id="sub_line2" type="text" value=""></div>
+
+    <button id="sub_submit" type="button">Update</button>
+  </div>
+
   <script src="https://webtiming.github.io/timingsrc/lib/timingsrc-v2.js"></script>
   <script src="https://www.mcorp.no/lib/mcorp-2.0.js"></script>
   <script src="https://mcorp.no/lib/mediasync.js"></script>
@@ -36,16 +43,37 @@
   <script>
 
     var timingObject = new TIMINGSRC.TimingObject();
+    var timingProvider = function () {
+      return timingObject;
+    }
 
     window.player1 = ludo(document.querySelector('#mount-here'), 'KMTE40000312', {
-        autoplay: true,
-        timingObject: timingObject
+      debug: true,
+      mute: true,
+      autoplay: true,
+      timingObject: timingProvider
     });
 
     window.player2 = ludo(document.querySelector('#mount-there'), 'KMTE40000312', {
-        autoplay: true,
-        timingObject: timingObject
+      mute: true,
+      autoplay: true,
+      timingObject: timingProvider
     });
+
+    function updateSubtitles() {
+      var line1 = document.getElementById('sub_line1').value,
+        line2 = document.getElementById('sub_line2').value,
+        lines = [];
+
+      line1 && lines.push(line1);
+      line2 && lines.push(line1);
+
+      console.log('updateSubtitles', lines);
+
+      window.player1.emit('set-subtitles', lines);
+    }
+
+    document.getElementById('sub_submit').addEventListener('click', updateSubtitles);
 
   </script>
 

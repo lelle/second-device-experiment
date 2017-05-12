@@ -7,7 +7,7 @@
   "author": "",
   "license": "MIT",
   "scripts": {
-    "start": "http-server -o public"
+    "start": "http-server -o public -p 8060"
   },
   "dependencies": {
     "http-server": "^0.10.0"
