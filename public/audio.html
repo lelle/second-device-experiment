@@ -119,11 +119,34 @@
       }
     };
 
+    var fade_timer;
+    var fade_in = function(element, timeout) {
+      if (element.volume === undefined) {
+        return;
+      }
+      if (timeout > 0) {
+        fade_timer = setTimeout(function()  {
+              fade_in(element, Math.min(timeout, timeout - 250));
+              }, 250);
+        return;
+      }
+      // We're fading
+      if (element.volume < 1) {
+        element.volume = Math.min(1, element.volume + 0.05);
+        fade_timer = setTimeout(function() { fade_in(element, 0); }, 0);
+      }
+    };
+
     app.subseq.on("change", function(e) {
       document.querySelector("#subtitle").innerHTML = e.data;
       if (app.read_subs) {
         var txt = e.data.replace(/<(?:.|\n)*?>/gm, ' ');
         responsiveVoice.speak(txt);
+
+        // Turn down volume of foreground
+        // Cancel fade-ins
+        clearTimeout(fade_timer);
+        document.querySelector("audio#dialog").volume = 0.3;
       }
     });
     app.subseq.on("remove", function(e) {
@@ -227,8 +250,12 @@
       document.querySelector("#lydtekst_on").onclick = function(e) {
         responsiveVoice.setDefaultVoice("Norwegian Male");
         //responsiveVoice.clickEvent(e);
-        if (e.srcElement.checked)
+        if (e.srcElement.checked) {
           responsiveVoice.speak("Leser tekst");
+          responsiveVoice.fallback_audio.onended = function() {
+            fade_in(document.querySelector("audio#dialog"), 2000);
+          }
+        }
         app.read_subs = e.srcElement.checked;
         // For demo purposes: turn down dialog a LOT
         document.querySelector("audio#dialog").volume = app.read_subs ? 0.2 : 1;
@@ -236,7 +263,6 @@
 
       console.log("Registering");
       document.querySelector("#lesbarhet").onchange = function(e) {
-        console.log("PING");
         var level = e.srcElement.value;
         console.log("lesbarhet", level);
         var opacity = 0.3;
@@ -282,7 +308,7 @@
     width: 150px;
   }
   .slider {
-    width: 80%;
+    /* width: 80%; */
     position: relative;
     min-height: 50px;
     /* height: 100px;*/
